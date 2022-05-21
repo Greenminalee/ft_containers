@@ -86,7 +86,7 @@ namespace ft {
         }
 
         reference operator[](difference_type n) const {
-            return (_it[-n - 1]);
+            return (this->_it[-n - 1]);
         }
     };
 

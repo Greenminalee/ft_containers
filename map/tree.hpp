@@ -115,11 +115,11 @@ namespace ft {
         }
 
         iterator end() {
-            return (iterator(_super_root));
+            return (iterator(this->_super_root));
         }
 
         const_iterator end() const {
-            return (const_iterator(_super_root));
+            return (const_iterator(this->_super_root));
         }
 
         reverse_iterator rbegin() {
@@ -213,7 +213,6 @@ namespace ft {
                 else
                     p_node->right = 0;
                 p_node->height--;
-                update_node_height(p_node);
                 e_rebalance(p_node);
                 this->_size--;
                 this->_node_alloc.destroy(cur_node);
@@ -237,7 +236,6 @@ namespace ft {
                         child_node->parent->right = 0;
                     }
                 }
-                update_node_height(child_node);
                 e_rebalance(child_node);
                 this->_size--;
                 this->_node_alloc.destroy(child_node);
@@ -252,7 +250,6 @@ namespace ft {
                 }
                 if (cur_node == this->_root)
                     this->_root = cur_node->left;
-                update_node_height(cur_node->left);
                 e_rebalance(cur_node->left);
                 this->_size--;
                 this->_node_alloc.destroy(cur_node);
@@ -267,7 +264,6 @@ namespace ft {
                 }
                 if (cur_node == this->_root)
                     this->_root = cur_node->right;
-                update_node_height(cur_node->right);
                 e_rebalance(cur_node->right);
                 this->_size--;
                 this->_node_alloc.destroy(cur_node);
@@ -321,7 +317,7 @@ namespace ft {
         }
 
         size_type max_size() const {
-            return (std::min<size_type>(_node_alloc.max_size(),
+            return (std::min<size_type>(this->_node_alloc.max_size(),
                                         std::numeric_limits<difference_type>::max()));
         }
 

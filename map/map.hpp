@@ -47,6 +47,11 @@ namespace ft {
         typedef typename tree_type::reverse_iterator reverse_iterator;
         typedef typename tree_type::const_reverse_iterator const_reverse_iterator;
 
+    private:
+        key_compare _comp;
+        allocator_type _allocator;
+        tree_type _tree;
+        
     public:
         explicit map(const key_compare &comp = key_compare(),
                      const allocator_type &alloc = allocator_type()) : _comp(comp), _allocator(alloc),
@@ -214,10 +219,6 @@ namespace ft {
         friend bool operator<(const map<_Key, _T, _Compare, _Alloc> &lhs,
                               const map<_Key, _T, _Compare, _Alloc> &rhs);
 
-    private:
-        key_compare _comp;
-        allocator_type _allocator;
-        tree_type _tree;
     };
 
     template<class Key, class T, class Compare, class Alloc>
@@ -249,7 +250,6 @@ namespace ft {
     bool operator>=(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs) {
         return !(lhs < rhs);
     }
-
 
     template<class Key, class T, class Compare, class Alloc>
     void swap(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs) {

@@ -1,9 +1,7 @@
 #ifndef VECTOR
 #define VECTOR
 
-#include <memory>
 #include <iostream>
-#include <iterator>
 #include "vector_iterator.hpp"
 #include "../iterator/reverse_iterator.hpp"
 #include "../util/util.hpp"
@@ -35,18 +33,18 @@ namespace ft {
 
     public:
         explicit vector(const allocator_type &alloc = allocator_type()) {
-            _allocator = alloc;
-            _begin = NULL;
-            _size = 0;
-            _capacity = 0;
+            this->_allocator = alloc;
+            this->_begin = NULL;
+            this->_size = 0;
+            this->_capacity = 0;
         }
 
         explicit vector(size_type n, const value_type &val = value_type(),
                         const allocator_type &alloc = allocator_type()) {
-            _allocator = alloc;
-            _size = n;
-            _capacity = n;
-            _begin = _allocator.allocate(n);
+            this->_allocator = alloc;
+            this->_size = n;
+            this->_capacity = n;
+            this->_begin = this->_allocator.allocate(n);
             for (size_type i = 0; i < n; i++)
                 this->_allocator.construct(this->_begin + i, val);
         }
@@ -54,16 +52,14 @@ namespace ft {
         template<class InputIterator>
         vector(InputIterator first, InputIterator last,
                const allocator_type &alloc = allocator_type(),
-               typename enable_if<!is_integral<InputIterator>::value>::type * = 0) : _allocator(alloc) {
+               typename enable_if<!is_integral<InputIterator>::value>::type * = 0) :_allocator(alloc) {
             difference_type tmp_size = std::distance(first, last);
 
             if (tmp_size < 0)
                 throw std::length_error("vector");
             this->_size = static_cast<size_type>(tmp_size);
             this->_capacity = this->_size;
-            this->_begin = _allocator.allocate(_capacity);
-
-
+            this->_begin = this->_allocator.allocate(this->_capacity);
             std::uninitialized_copy(first, last, this->_begin);
         }
 
@@ -87,15 +83,14 @@ namespace ft {
                 this->_begin = this->_allocator.allocate(this->_capacity);
             }
             for (size_type i = 0; i < this->_size; i++)
-                this->_allocator.construct(_begin + i, x._begin[i]);
-
+                this->_allocator.construct(this->_begin + i, x._begin[i]);
             return (*this);
         }
 
         ~vector() {
             for (size_type i = 0; i < this->_size; i++)
                 this->_allocator.destroy(this->_begin + i);
-            if (_capacity != 0)
+            if (this->_capacity != 0)
                 this->_allocator.deallocate(this->_begin, this->_capacity);
         }
 
@@ -175,12 +170,12 @@ namespace ft {
         void reserve(size_type n) {
             if (n < this->_capacity)
                 return;
-            pointer new_first = _allocator.allocate(n);
+            pointer new_first = this->_allocator.allocate(n);
             for (size_type i = 0; i < this->_size; i++)
-                _allocator.construct(new_first + i, *(this->_begin + i));
+                this->_allocator.construct(new_first + i, *(this->_begin + i));
             for (size_type i = 0; i < this->_size; i++)
-                _allocator.destroy(this->_begin + i);
-            _allocator.deallocate(this->_begin, this->_capacity);
+                this->_allocator.destroy(this->_begin + i);
+            this->_allocator.deallocate(this->_begin, this->_capacity);
             this->_capacity = n;
             this->_begin = new_first;
         }
@@ -242,9 +237,9 @@ namespace ft {
 
         void push_back(const value_type &x) {
             if (this->_size >= this->_capacity)
-                reserve(this->_capacity == 0 ? 1 : _capacity * 2);
+                reserve(this->_capacity == 0 ? 1 : this->_capacity * 2);
 
-            this->_allocator.construct(this->_begin + _size, x);
+            this->_allocator.construct(this->_begin + this->_size, x);
             this->_size++;
         }
 
@@ -252,64 +247,107 @@ namespace ft {
             value_type tmp;
 
             tmp = this->back();
-            this->_allocator.destroy(this->_begin + _size - 1);
+            this->_allocator.destroy(this->_begin + this->_size - 1);
             this->_size -= 1;
 
         }
 
         iterator insert(iterator position, const value_type &val) {
+            if (position < begin() || position > end())
+				throw std::logic_error("vector");
             difference_type d_size = position - this->begin();
-            pointer new_begin = _allocator.allocate(this->_size + 1);
-
-            std::uninitialized_copy(this->begin(), position, new_begin);
-            this->_allocator.construct(new_begin + d_size, val);
-            std::uninitialized_copy(position, this->end(), new_begin + d_size + 1);
-            for (size_type i = 0; i < this->_size; i++)
-                this->_allocator.destroy(this->_begin + i);
-            this->_allocator.deallocate(this->_begin, this->_capacity);
-
-            this->_begin = new_begin;
-            this->_size += 1;
-            this->_capacity += 1;
-
-            return (iterator(new_begin + d_size));
+            if (this->_size == this->_capacity){
+                if (this->_capacity == 0)
+                    this->_capacity += 1;
+                this->_capacity *= 2;
+                pointer new_begin = this->_allocator.allocate(this->_capacity);
+                std::uninitialized_copy(this->begin(), position, iterator(new_begin));
+                this->_allocator.construct(new_begin + d_size, val);
+                std::uninitialized_copy(position, this->end(), iterator(new_begin + d_size + 1));
+                for (size_type i = 0; i < this->_size; i++)
+                    this->_allocator.destroy(this->_begin + i);
+                if (this->_size)
+                    this->_allocator.deallocate(this->_begin, this->_size);
+                this->_size += 1;
+                this->_begin = new_begin;
+            }
+            else
+            {
+                for (size_type i = this->_size; i > static_cast<size_type>(d_size); i--)
+                {
+                    this->_allocator.destroy(this->_begin + i);
+                    this->_allocator.construct(this->_begin + i, *(this->_begin + i - 1));
+                }
+                    this->_allocator.destroy(&(*position));
+                    this->_allocator.construct(&(*position), val);
+                    this->_size += 1;
+            }
+            return (this->begin() + d_size);
         }
 
         void insert(iterator position, size_type n, const value_type &val) {
             difference_type d_size = position - this->begin();
-            pointer new_begin = _allocator.allocate(this->_size + n);
-
-            std::uninitialized_copy(this->begin(), position, new_begin);
-            std::uninitialized_fill_n(new_begin + d_size, n, val);
-            std::uninitialized_copy(position, this->end(), new_begin + d_size + n);
-
-            for (size_type i = 0; i < this->_size; i++)
-                this->_allocator.destroy(this->_begin + i);
-            this->_allocator.deallocate(this->_begin, this->_capacity);
-
-            this->_begin = new_begin;
-            this->_size += n;
-            this->_capacity += n;
+            
+            if (this->_size + n > this->_capacity){
+                if (this->_capacity * 2 >= this->_size + n)
+                    this->_capacity *= 2;
+                else
+                    this->_size += n;
+                pointer new_begin = this->_allocator.allocate(this->_capacity);
+                std::uninitialized_copy(this->begin(), position, new_begin);
+                std::uninitialized_fill_n(new_begin + d_size, n, val);
+                std::uninitialized_copy(position, this->end(), new_begin + d_size + n);
+                for (size_type i = 0; i < this->_size; i++)
+                    this->_allocator.destroy(this->_begin + i);
+                this->_allocator.deallocate(this->_begin, this->_capacity);
+                this->_size += n;
+                this->_begin = new_begin;
+            }
+            else {
+                for (size_type i = this->_size; i > static_cast<size_type>(d_size); i--){
+                    this->_allocator.destroy(this->_begin + i + n - 1);
+                    this->_allocator.construct(this->_begin + i + n - 1, *(this->_begin + i - 1));
+                }
+                for (size_type i = 0; i < n; i++){
+                    this->_allocator.destroy(this->_begin + i + d_size);
+                    this->_allocator.construct(this->_begin + i + d_size, val);
+                }
+                    this->_size += n;
+            }
         }
 
         template<class InputIterator>
         void insert(iterator position, InputIterator first, InputIterator last,
                     typename enable_if<!is_integral<InputIterator>::value>::type * = 0) {
-            size_type n = static_cast<size_type>(std::distance(first, last));
             difference_type d_size = position - this->begin();
-            pointer new_begin = _allocator.allocate(this->_size + n);
-
-            std::uninitialized_copy(this->begin(), position, new_begin);
-            std::uninitialized_copy(first, last, new_begin + d_size);
-            std::uninitialized_copy(position, this->end(), new_begin + d_size + n);
-
-            for (size_type i = 0; i < this->_size; i++)
-                this->_allocator.destroy(this->_begin + i);
-            this->_allocator.deallocate(this->_begin, this->_capacity);
-
-            this->_begin = new_begin;
-            this->_size += n;
-            this->_capacity += n;
+            size_type n = static_cast<size_type>(std::distance(first, last));
+            
+            if (this->_size + n > this->_capacity){
+                if (this->_capacity * 2 >= this->_size + n)
+                        this->_capacity *= 2;
+                    else
+                        this->_capacity = this->_size + n;
+                pointer new_begin = this->_allocator.allocate(this->_capacity);
+                std::uninitialized_copy(this->begin(), position, new_begin);
+                std::uninitialized_copy(first, last, new_begin + d_size);
+                std::uninitialized_copy(position, this->end(), new_begin + d_size + n);
+                
+                for (size_type i = 0; i < this->_size; i++)
+                    this->_allocator.destroy(this->_begin + i);
+                this->_allocator.deallocate(this->_begin, this->_capacity);
+                this->_size += n;
+                this->_begin = new_begin;
+            } else {
+                for (size_type i = this->_size; i > static_cast<size_type>(d_size); i--){
+                    this->_allocator.destroy(this->_begin + i + n - 1);
+                    this->_allocator.construct(this->_begin + i + n - 1, *(this->_begin + i - 1));
+                }
+                for (size_type i = 0; i < n; i++, this->_begin++){
+                    this->_allocator.destroy(this->_begin + i + n);
+                    this->_allocator.construct(this->_begin + + d_size + i, *this->_begin);
+                }
+                this->_size += n;
+            }
         }
 
         iterator erase(const_iterator position) {
@@ -320,7 +358,7 @@ namespace ft {
                 this->_allocator.construct(this->_begin + i, *(this->_begin + i + 1));
             }
             this->_size--;
-            this->_allocator.destroy(this->_begin + _size - 1);
+            this->_allocator.destroy(this->_begin + this->_size - 1);
             return (this->begin() + d_size);
         }
 

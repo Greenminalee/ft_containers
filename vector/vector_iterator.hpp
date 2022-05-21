@@ -19,32 +19,31 @@ namespace ft {
 
     public:
         vector_iterator() {
-            _p = 0;
+            this->_p = 0;
         }
 
         vector_iterator(pointer p) {
-            _p = p;
+            this->_p = p;
         }
 
         template<class Iter>
         vector_iterator(const vector_iterator<Iter> &it) {
-            _p = it.base();
+            this->_p = it.base();
         }
 
         vector_iterator<iterator_type> &operator=(vector_iterator<iterator_type> const &copy) {
-            _p = copy.base();
+            this->_p = copy.base();
             return (*this);
         }
 
-        virtual ~vector_iterator() {
-        }
+        virtual ~vector_iterator() {}
 
         pointer base() const {
-            return (_p);
+            return (this->_p);
         }
 
         reference operator*() const {
-            return (*_p);
+            return (*this->_p);
         }
 
         pointer operator->() const {
@@ -52,46 +51,46 @@ namespace ft {
         }
 
         reference operator[](difference_type n) const {
-            return *(_p + n);
+            return *(this->_p + n);
         }
 
         vector_iterator &operator++() {
-            ++_p;
+            ++this->_p;
             return (*this);
         }
 
         vector_iterator operator++(int) {
             vector_iterator tmp(*this);
-            ++_p;
+            ++this->_p;
             return (tmp);
         }
 
         vector_iterator &operator--() {
-            --_p;
+            --this->_p;
             return (*this);
         }
 
         vector_iterator operator--(int) {
             vector_iterator tmp(*this);
-            --_p;
+            --this->_p;
             return (tmp);
         }
 
         vector_iterator operator+(const difference_type &n) const {
-            return (vector_iterator(_p + n));
+            return (vector_iterator(this->_p + n));
         }
 
         vector_iterator operator-(const difference_type &n) const {
-            return (vector_iterator(_p - n));
+            return (vector_iterator(this->_p - n));
         }
 
         vector_iterator &operator+=(const difference_type &n) {
-            _p += n;
+            this->_p += n;
             return (*this);
         }
 
         vector_iterator &operator-=(const difference_type &n) {
-            _p -= n;
+            this->_p -= n;
             return (*this);
         }
 
@@ -161,7 +160,6 @@ namespace ft {
     operator-(const vector_iterator<A> &lhs, const vector_iterator<B> &rhs) {
         return (lhs.base() - rhs.base());
     }
-
 }
 
 #endif
