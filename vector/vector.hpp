@@ -287,7 +287,6 @@ namespace ft {
 
         void insert(iterator position, size_type n, const value_type &val) {
             difference_type d_size = position - this->begin();
-            
             if (this->_size + n > this->_capacity){
                 if (this->_capacity * 2 >= this->_size + n)
                     this->_capacity *= 2;

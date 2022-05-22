@@ -1,6 +1,7 @@
 #ifndef ITERATOR_TRAIS
 #define ITERATOR_TRAIS
 
+#include <iterator>
 namespace ft {
     template<class Iterator>
     struct iterator_traits {

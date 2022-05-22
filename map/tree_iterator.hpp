@@ -1,6 +1,7 @@
 #ifndef TREE_ITERATOR
 #define TREE_ITERATOR
 
+#include <algorithm>
 #include "../util/util.hpp"
 #include "../iterator/iterator_traits.hpp"
 

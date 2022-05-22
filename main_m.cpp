@@ -1,14 +1,23 @@
+// #include <map>
+#include "map/map.hpp"
 #include <iostream>
-#include "vector/vector.hpp"
-
 
 int main()
 {
-    ft::vector<int> v(10);
+    ft::map<char, std::string> mymap;
 
-    for (int i = 0; i < 11; i++)
-    {
-        std::cout << v[i] << std::endl;
-    }
-    return (0);
+
+    // mymap['a'] = "hello";
+    std::cout << mymap['a'] << std::endl;
+    // mymap['b'] = "another element";
+    // mymap['c'] = mymap['b'];
+
+    // std::cout << "mymap['a'] is " << mymap['a'] << '\n';
+    // std::cout << "mymap['b'] is " << mymap['b'] << '\n';
+    // std::cout << "mymap['c'] is " << mymap['c'] << '\n';
+    // std::cout << "mymap['d'] is " << mymap['d'] << '\n';
+
+    // std::cout << "mymap now contains " << mymap.size() << " elements.\n";
+
+    return 0;
 }
