@@ -93,18 +93,6 @@ namespace ft {
             this->_p -= n;
             return (*this);
         }
-
-        template<class Type>
-        friend vector_iterator<Type> operator+(typename vector_iterator<Type>::difference_type n,
-                                               const vector_iterator<Type> &it);
-
-        template<class Type>
-        friend vector_iterator<Type> operator-(typename vector_iterator<Type>::difference_type n,
-                                               const vector_iterator<Type> &it);
-
-        template<typename A, typename B>
-        friend typename vector_iterator<A>::difference_type operator-(const vector_iterator<A> &lhs,
-                                                                      const vector_iterator<B> &rhs);
     };
 
     template<typename A, typename B>
@@ -146,13 +134,13 @@ namespace ft {
     template<class Type>
     vector_iterator<Type> operator+(typename vector_iterator<Type>::difference_type n,
                                     const vector_iterator<Type> &it) {
-        return vector_iterator<Type>(it._p + n);
+        return vector_iterator<Type>(it.base() + n);
     };
 
     template<class Type>
     vector_iterator<Type> operator-(typename vector_iterator<Type>::difference_type n,
                                     const vector_iterator<Type> &it) {
-        return vector_iterator<Type>(it._p - n);
+        return vector_iterator<Type>(it.base() - n);
     };
 
     template<typename A, typename B>
